@@ -1,17 +1,18 @@
 package com.thz.shareding.dao;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.thz.shareding.dto.Goods;
 import com.thz.shareding.dto.GoodsExample;
+import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-public interface GoodsMapper extends BaseMapper<Goods> {
+public interface GoodsMapper {
     int countByExample(GoodsExample example);
 
     int deleteByExample(GoodsExample example);
 
     int deleteByPrimaryKey(Long goodsId);
+
+    int insert(Goods record);
 
     int insertSelective(Goods record);
 

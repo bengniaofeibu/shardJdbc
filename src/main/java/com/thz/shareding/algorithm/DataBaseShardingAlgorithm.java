@@ -13,7 +13,7 @@
 //import java.util.LinkedHashSet;
 //
 //@Component
-//public class DataBaseShardingAlgorithm implements SingleKeyDatabaseShardingAlgorithm<Long> {
+//public class DataBaseShardingAlgorithm implements  SingleKeyDatabaseShardingAlgorithm<Long> {
 //
 //    @Autowired
 //    private DataBaseConfig0 dataBaseConfig0;

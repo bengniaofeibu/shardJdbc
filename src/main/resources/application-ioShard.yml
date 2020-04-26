@@ -1,0 +1,65 @@
+sharding:
+  jdbc:
+    datasource:
+      names: db-master0,db-master1,db-saver0,db-saver1
+      db-master0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.18.128:3306/db-master0?characterEncoding=utf8&useSSL=false
+        username: root
+        password: root
+        driverClassName: com.mysql.jdbc.Driver
+      db-master1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.18.128:3306/db-master1?characterEncoding=utf8&useSSL=false
+        username: root
+        password: root
+        driverClassName: com.mysql.jdbc.Driver
+      db-saver0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.18.129:3306/db-saver0?characterEncoding=utf8&useSSL=false
+        username: root
+        password: root
+        driverClassName: com.mysql.jdbc.Driver
+      db-saver1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        url: jdbc:mysql://192.168.18.129:3306/db-saver1?characterEncoding=utf8&useSSL=false
+        username: root
+        password: root
+        driverClassName: com.mysql.jdbc.Driver
+    #  #分库策略  根据id取模
+    config:
+      sharding:
+        tables:
+      #分表策略  根据id取模,确定数据最终落在哪个表中
+          t_user:
+            key-generator-column-name: id
+            actual-data-nodes: db-master${0..1}.t_user_${0..2}
+            database-strategy:
+              complex:
+                sharding-columns: id
+                algorithm-class-name: com.thz.shareding.algorithm.DataShardingAlgorithm
+            table-strategy:
+              inline:
+                sharding-column: id
+                algorithm-expression: t_user_${id % 3}
+          t_address:
+            key-generator-column-name: id
+            actual-data-nodes: db-master${0..1}.t_address_${0..2}
+            database-strategy:
+              complex:
+                sharding-columns: id
+                algorithm-class-name: com.thz.shareding.algorithm.DataShardingAlgorithm
+            table-strategy:
+              inline:
+                sharding-column: id
+                algorithm-expression: t_address_${id % 3}
+        master-slave-rules:
+          db-master0:
+            master-data-source-name: db-master0
+            slave-data-source-names: db-saver0,db-saver1
+          db-master1:
+            master-data-source-name: db-master1
+            slave-data-source-names: db-saver0,db-saver1
+        binding-tables: t_user,t_address
+      props:
+        sql.show: true
