@@ -1,0 +1,14 @@
+spring:
+    application:
+      name: sharding
+    cloud:
+      nacos:
+        config:
+          server-addr: ${config.address}:8848
+          file-extension: yaml
+          group: thz
+          name: ${config.id}
+    profiles:
+      active: ${active.profile}
+server:
+  port: 8082

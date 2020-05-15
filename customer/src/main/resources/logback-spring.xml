@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(%-4L){faint} %clr([%-20thread]){faint} %clr(%-40.40logger{39}){cyan} %clr(LOG_VERSION_V1){green} %clr(%X{TRACE_ID}){green} %clr(%X{TRACE_UID}){green} %clr(%X{TRACE_GROUP}){green} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+    <property name="maxHistory" value="168"/>
+
+    <springProperty scope="context" name="log_home" source="log.path" defaultValue="/data/logs"/>
+    <springProperty scope="context" name="module_name" source="spring.application.name" defaultValue="module"/>
+
+
+    <!--控制台输出info级别-->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss:SSS}|[%thread]|[%X{tid}]|%-5level|%logger{50}|LOG_VERSION_V1|%X{TRACE_ID}|%X{TRACE_UID}|%X{TRACE_GROUP}|%msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${log_home}/${module_name}/${module_name}.%d{yyyy-MM-dd_HH}.%i.log</fileNamePattern>　
+            <MaxHistory>30</MaxHistory>
+            <!--日志文件最大的大小-->
+            <maxFileSize>5MB</maxFileSize>
+        </rollingPolicy>
+    </appender>
+
+
+    <springProfile name="dev">
+        <logger name="com.service.shareding.controller" level="Info"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="release">
+        <logger name="com.service.shareding.controller" level="DEBUG"/>
+        <logger name="org.springframework" level="INFO"/>
+        <logger name="org.mybatis" level="Info"/>
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>
